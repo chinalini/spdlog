@@ -45,6 +45,33 @@ TEST_CASE("flush_on", "[flush_on]") {
                                     default_eol, default_eol, default_eol));
 }
 
+TEST_CASE("ansicolor_file_logger", "[ansicolor_logger]") {
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
+
+    // auto logger = spdlog::details::make_unique<spdlog::sinks::ansicolor_file_sink_mt>(filename);
+    auto logger = spdlog::create<spdlog::sinks::ansicolor_file_sink_mt>("logger", filename);
+    logger->set_pattern("[%^+++%$] %v");
+
+    auto sink =
+        std::dynamic_pointer_cast<spdlog::sinks::ansicolor_file_sink_mt>(logger->sinks().front());
+    sink->set_color(spdlog::level::info, spdlog::details::ansicolors::blue);
+
+    logger->info("Test message {}", 1);
+    logger->info("Test message {}", 2);
+
+    logger->flush();
+    require_message_count(SIMPLE_LOG, 2);
+    using spdlog::details::os::default_eol;
+    REQUIRE(file_contents(SIMPLE_LOG) ==
+            spdlog::fmt_lib::format(
+                "[{ansi_blue}+++{ansi_reset}] Test message 1{eol}"
+                "[{ansi_blue}+++{ansi_reset}] Test message 2{eol}",
+                spdlog::fmt_lib::arg("ansi_blue", spdlog::details::ansicolors::blue),
+                spdlog::fmt_lib::arg("ansi_reset", spdlog::details::ansicolors::reset),
+                spdlog::fmt_lib::arg("eol", default_eol)));
+}
+
 TEST_CASE("rotating_file_logger1", "[rotating_logger]") {
     prepare_logdir();
     size_t max_size = 1024 * 10;

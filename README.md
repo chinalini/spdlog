@@ -61,23 +61,23 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/
 ```c++
 #include "spdlog/spdlog.h"
 
-int main() 
+int main()
 {
     spdlog::info("Welcome to spdlog!");
     spdlog::error("Some error message with arg: {}", 1);
-    
+
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);
     spdlog::info("Positional args are {1} {0}..", "too", "supported");
     spdlog::info("{:<30}", "left aligned");
-    
+
     spdlog::set_level(spdlog::level::debug); // Set global log level to debug
-    spdlog::debug("This message should be displayed..");    
-    
+    spdlog::debug("This message should be displayed..");
+
     // change log pattern
     spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
-    
+
     // Compile time log levels
     // Note that this does not change the current log level, it will only
     // remove (depending on SPDLOG_ACTIVE_LEVEL) the call on the release code.
@@ -94,8 +94,8 @@ int main()
 void stdout_example()
 {
     // create a color multi-threaded logger
-    auto console = spdlog::stdout_color_mt("console");    
-    auto err_logger = spdlog::stderr_color_mt("stderr");    
+    auto console = spdlog::stdout_color_mt("console");
+    auto err_logger = spdlog::stderr_color_mt("stderr");
     spdlog::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name)");
 }
 ```
@@ -106,9 +106,25 @@ void stdout_example()
 #include "spdlog/sinks/basic_file_sink.h"
 void basic_logfile_example()
 {
-    try 
+    try
     {
         auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
+    }
+    catch (const spdlog::spdlog_ex &ex)
+    {
+        std::cout << "Log init failed: " << ex.what() << std::endl;
+    }
+}
+```
+---
+#### ANSI-colored file logger
+```c++
+#include "spdlog/sinks/ansicolor_file_sink.h"
+void ansicolor_logfile_example()
+{
+    try
+    {
+        auto logger = spdlog::ansicolor_logger_mt("ansi_logger", "logs/ansicolor-log.txt");
     }
     catch (const spdlog::spdlog_ex &ex)
     {
@@ -161,7 +177,7 @@ void daily_example()
 // This is useful to display debug logs only when needed (e.g. when an error happens).
 // When needed, call dump_backtrace() to dump them to your log.
 
-spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. 
+spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer.
 // or my_logger->enable_backtrace(32)..
 for(int i = 0; i < 100; i++)
 {
@@ -188,9 +204,9 @@ spdlog::flush_every(std::chrono::seconds(3));
 #include "spdlog/stopwatch.h"
 void stopwatch_example()
 {
-    spdlog::stopwatch sw;    
+    spdlog::stopwatch sw;
     spdlog::debug("Elapsed {}", sw);
-    spdlog::debug("Elapsed {:.3}", sw);       
+    spdlog::debug("Elapsed {:.3}", sw);
 }
 
 ```
@@ -277,7 +293,7 @@ void async_example()
     // spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.
     auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
     // alternatively:
-    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");   
+    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");
 }
 
 ```
@@ -299,7 +315,7 @@ void multi_sink_example2()
     spdlog::register_logger(logger);
 }
 ```
- 
+
 ---
 #### User-defined types
 ```c++
@@ -321,7 +337,7 @@ void user_defined_example()
 
 ---
 #### User-defined flags in the log pattern
-```c++ 
+```c++
 // Log patterns can contain custom flags.
 // the following example will add new flag '%*' - which will be bound to a <my_formatter_flag> instance.
 #include "spdlog/pattern_formatter.h"
@@ -341,7 +357,7 @@ public:
 };
 
 void custom_flags_example()
-{    
+{
     auto formatter = std::make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
@@ -409,7 +425,7 @@ $ ./example
 ---
 #### Log file open/close event handlers
 ```c++
-// You can get callbacks from spdlog before/after a log file has been opened or closed. 
+// You can get callbacks from spdlog before/after a log file has been opened or closed.
 // This is useful for cleanup procedures or for adding something to the start/end of the log file.
 void file_events_example()
 {
@@ -419,7 +435,7 @@ void file_events_example()
     handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) { fputs("After opening\n", fstream); };
     handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) { fputs("Before closing\n", fstream); };
     handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
-    auto my_logger = spdlog::basic_logger_st("some_logger", "logs/events-sample.txt", true, handlers);        
+    auto my_logger = spdlog::basic_logger_st("some_logger", "logs/events-sample.txt", true, handlers);
 }
 ```
 
@@ -500,16 +516,16 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] Messages     : 1,000,000
 [info] Threads      : 10
 [info] Queue        : 8,192 slots
-[info] Queue memory : 8,192 x 272 = 2,176 KB 
+[info] Queue memory : 8,192 x 272 = 2,176 KB
 [info] -------------------------------------------------
-[info] 
+[info]
 [info] *********************************
 [info] Queue Overflow Policy: block
 [info] *********************************
 [info] Elapsed: 1.70784 secs     585,535/sec
 [info] Elapsed: 1.69805 secs     588,910/sec
 [info] Elapsed: 1.7026 secs      587,337/sec
-[info] 
+[info]
 [info] *********************************
 [info] Queue Overflow Policy: overrun
 [info] *********************************

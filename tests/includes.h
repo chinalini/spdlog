@@ -28,6 +28,7 @@
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/mdc.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/ansicolor_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/ostream_sink.h"

@@ -10,6 +10,7 @@
 void load_levels_example();
 void stdout_logger_example();
 void basic_example();
+void ansicolor_example();
 void rotating_example();
 void ansicolor_rotating_example();
 void daily_example();
@@ -71,6 +72,7 @@ int main(int, char *[]) {
     try {
         stdout_logger_example();
         basic_example();
+        ansicolor_example();
         rotating_example();
         ansicolor_rotating_example();
         daily_example();
@@ -121,6 +123,12 @@ void stdout_logger_example() {
 void basic_example() {
     // Create basic file logger (not rotated).
     auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt", true);
+}
+
+#include "spdlog/sinks/ansicolor_file_sink.h"
+void ansicolor_example() {
+    // Create ANSI-colored file logger (not rotated).
+    auto my_logger = spdlog::ansicolor_logger_mt("ansi_logger", "logs/ansicolor-log.txt", true);
 }
 
 #include "spdlog/sinks/rotating_file_sink.h"
