@@ -101,3 +101,60 @@ TEST_CASE("rotating_file_logger3", "[rotating_logger]") {
     REQUIRE_THROWS_AS(spdlog::rotating_logger_mt("logger", basename, max_size, 0),
                       spdlog::spdlog_ex);
 }
+
+TEST_CASE("ansicolor_rotating_file_logger1", "[ansicolor_rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    auto logger = spdlog::ansicolor_rotating_logger_mt("logger", basename, max_size, 0);
+
+    for (int i = 0; i < 10; ++i) {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+    require_message_count(ROTATING_LOG, 10);
+}
+
+TEST_CASE("ansicolor_rotating_file_logger2", "[ansicolor_rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+
+    {
+        // make an initial logger to create the first output file
+        auto logger = spdlog::ansicolor_rotating_logger_mt("logger", basename, max_size, 2, true);
+        for (int i = 0; i < 10; ++i) {
+            logger->info("Test message {}", i);
+        }
+        // drop causes the logger destructor to be called, which is required so the
+        // next logger can rename the first output file.
+        spdlog::drop(logger->name());
+    }
+
+    auto logger = spdlog::ansicolor_rotating_logger_mt("logger", basename, max_size, 2, true);
+    for (int i = 0; i < 10; ++i) {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+
+    require_message_count(ROTATING_LOG, 10);
+
+    for (int i = 0; i < 1000; i++) {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+    REQUIRE(get_filesize(ROTATING_LOG) <= max_size);
+    REQUIRE(get_filesize(ROTATING_LOG ".1") <= max_size);
+}
+
+// test that passing max_size=0 throws
+TEST_CASE("ansicolor_rotating_file_logger3", "[ansicolor_rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 0;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    REQUIRE_THROWS_AS(spdlog::ansicolor_rotating_logger_mt("logger", basename, max_size, 0),
+                      spdlog::spdlog_ex);
+}

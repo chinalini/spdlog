@@ -43,7 +43,7 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
-  * Rotating log files.
+  * Rotating log files (ANSI colors supported).
   * Daily log files.
   * Console logging (colors supported).
   * syslog.
@@ -126,6 +126,18 @@ void rotating_example()
     auto max_size = 1048576 * 5;
     auto max_files = 3;
     auto logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", max_size, max_files);
+}
+```
+
+---
+#### ANSI-colored rotating files
+```c++
+#include "spdlog/sinks/ansicolor_rotating_file_sink.h"
+void ansicolor_rotating_example() {
+    // Create an ANSI-colored file rotating logger with 10 MB size max and 3 rotated files.
+    auto max_size = 1048576 * 10;
+    auto max_files = 3;
+    auto logger = spdlog::ansicolor_rotating_logger_mt("ansi_logger", "logs/ansicolor_rotating.txt", max_size, max_files);
 }
 ```
 

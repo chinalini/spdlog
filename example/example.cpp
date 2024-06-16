@@ -11,6 +11,7 @@ void load_levels_example();
 void stdout_logger_example();
 void basic_example();
 void rotating_example();
+void ansicolor_rotating_example();
 void daily_example();
 void callback_example();
 void async_example();
@@ -71,6 +72,7 @@ int main(int, char *[]) {
         stdout_logger_example();
         basic_example();
         rotating_example();
+        ansicolor_rotating_example();
         daily_example();
         callback_example();
         async_example();
@@ -126,6 +128,13 @@ void rotating_example() {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
     auto rotating_logger =
         spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+}
+
+#include "spdlog/sinks/ansicolor_rotating_file_sink.h"
+void ansicolor_rotating_example() {
+    // Create an ANSI-colored file rotating logger with 10mb size max and 3 rotated files.
+    auto ansicolor_rotating_logger = spdlog::ansicolor_rotating_logger_mt(
+        "ansi_logger", "logs/ansicolor_rotating.txt", 1048576 * 10, 3);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"
