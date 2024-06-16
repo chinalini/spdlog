@@ -106,6 +106,15 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf) {
     }
 }
 
+SPDLOG_INLINE void file_helper::write(string_view_t buf) {
+    if (fd_ == nullptr) return;
+    size_t msg_size = buf.size();
+    auto data = buf.data();
+    if (std::fwrite(data, 1, msg_size, fd_) != msg_size) {
+        throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
+    }
+}
+
 SPDLOG_INLINE size_t file_helper::size() const {
     if (fd_ == nullptr) {
         throw_spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(filename_));

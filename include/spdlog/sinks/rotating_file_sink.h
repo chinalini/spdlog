@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <spdlog/details/file_helper.h>
+#include <spdlog/details/rotating_file.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/synchronous_factory.h>
 #include <spdlog/sinks/base_sink.h>
@@ -34,22 +34,7 @@ protected:
     void flush_() override;
 
 private:
-    // Rotate files:
-    // log.txt -> log.1.txt
-    // log.1.txt -> log.2.txt
-    // log.2.txt -> log.3.txt
-    // log.3.txt -> delete
-    void rotate_();
-
-    // delete the target if exists, and rename the src file  to target
-    // return true on success, false otherwise.
-    bool rename_file_(const filename_t &src_filename, const filename_t &target_filename);
-
-    filename_t base_filename_;
-    std::size_t max_size_;
-    std::size_t max_files_;
-    std::size_t current_size_;
-    details::file_helper file_helper_;
+    details::rotating_file file_;
 };
 
 using rotating_file_sink_mt = rotating_file_sink<std::mutex>;

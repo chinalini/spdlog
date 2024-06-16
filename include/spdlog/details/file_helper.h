@@ -28,6 +28,7 @@ public:
     void sync();
     void close();
     void write(const memory_buf_t &buf);
+    void write(string_view_t buf);
     size_t size() const;
     const filename_t &filename() const;
 
