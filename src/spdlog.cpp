@@ -13,6 +13,7 @@
 #include <spdlog/details/os-inl.h>
 #include <spdlog/details/registry-inl.h>
 #include <spdlog/details/rotating_file-inl.h>
+#include <spdlog/details/ansicolors-inl.h>
 #include <spdlog/logger-inl.h>
 #include <spdlog/pattern_formatter-inl.h>
 #include <spdlog/sinks/base_sink-inl.h>

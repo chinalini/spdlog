@@ -6,6 +6,7 @@
 #include <array>
 #include <memory>
 #include <mutex>
+#include <spdlog/details/ansicolors.h>
 #include <spdlog/details/console_globals.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/sink.h>
@@ -44,49 +45,48 @@ public:
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
     // Formatting codes
-    const string_view_t reset = "\033[m";
-    const string_view_t bold = "\033[1m";
-    const string_view_t dark = "\033[2m";
-    const string_view_t underline = "\033[4m";
-    const string_view_t blink = "\033[5m";
-    const string_view_t reverse = "\033[7m";
-    const string_view_t concealed = "\033[8m";
-    const string_view_t clear_line = "\033[K";
+    const string_view_t reset = details::ansicolors::reset;
+    const string_view_t bold = details::ansicolors::bold;
+    const string_view_t dark = details::ansicolors::dark;
+    const string_view_t underline = details::ansicolors::underline;
+    const string_view_t blink = details::ansicolors::blink;
+    const string_view_t reverse = details::ansicolors::reverse;
+    const string_view_t concealed = details::ansicolors::concealed;
+    const string_view_t clear_line = details::ansicolors::clear_line;
 
     // Foreground colors
-    const string_view_t black = "\033[30m";
-    const string_view_t red = "\033[31m";
-    const string_view_t green = "\033[32m";
-    const string_view_t yellow = "\033[33m";
-    const string_view_t blue = "\033[34m";
-    const string_view_t magenta = "\033[35m";
-    const string_view_t cyan = "\033[36m";
-    const string_view_t white = "\033[37m";
+    const string_view_t black = details::ansicolors::black;
+    const string_view_t red = details::ansicolors::red;
+    const string_view_t green = details::ansicolors::green;
+    const string_view_t yellow = details::ansicolors::yellow;
+    const string_view_t blue = details::ansicolors::blue;
+    const string_view_t magenta = details::ansicolors::magenta;
+    const string_view_t cyan = details::ansicolors::cyan;
+    const string_view_t white = details::ansicolors::white;
 
     /// Background colors
-    const string_view_t on_black = "\033[40m";
-    const string_view_t on_red = "\033[41m";
-    const string_view_t on_green = "\033[42m";
-    const string_view_t on_yellow = "\033[43m";
-    const string_view_t on_blue = "\033[44m";
-    const string_view_t on_magenta = "\033[45m";
-    const string_view_t on_cyan = "\033[46m";
-    const string_view_t on_white = "\033[47m";
+    const string_view_t on_black = details::ansicolors::on_black;
+    const string_view_t on_red = details::ansicolors::on_red;
+    const string_view_t on_green = details::ansicolors::on_green;
+    const string_view_t on_yellow = details::ansicolors::on_yellow;
+    const string_view_t on_blue = details::ansicolors::on_blue;
+    const string_view_t on_magenta = details::ansicolors::on_magenta;
+    const string_view_t on_cyan = details::ansicolors::on_cyan;
+    const string_view_t on_white = details::ansicolors::on_white;
 
     /// Bold colors
-    const string_view_t yellow_bold = "\033[33m\033[1m";
-    const string_view_t red_bold = "\033[31m\033[1m";
-    const string_view_t bold_on_red = "\033[1m\033[41m";
+    const string_view_t yellow_bold = details::ansicolors::yellow_bold;
+    const string_view_t red_bold = details::ansicolors::red_bold;
+    const string_view_t bold_on_red = details::ansicolors::bold_on_red;
 
 private:
     FILE *target_file_;
     mutex_t &mutex_;
+    details::ansicolors colors_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::array<std::string, level::n_levels> colors_;
-    void print_ccode_(const string_view_t &color_code);
+    void print_view_(const string_view_t &sv);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
-    static std::string to_string_(const string_view_t &sv);
 };
 
 template <typename ConsoleMutex>
