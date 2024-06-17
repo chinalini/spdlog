@@ -63,13 +63,11 @@ TEST_CASE("ansicolor_file_logger", "[ansicolor_logger]") {
     logger->flush();
     require_message_count(SIMPLE_LOG, 2);
     using spdlog::details::os::default_eol;
-    REQUIRE(file_contents(SIMPLE_LOG) ==
-            spdlog::fmt_lib::format(
-                "[{ansi_blue}+++{ansi_reset}] Test message 1{eol}"
-                "[{ansi_blue}+++{ansi_reset}] Test message 2{eol}",
-                spdlog::fmt_lib::arg("ansi_blue", spdlog::details::ansicolors::blue),
-                spdlog::fmt_lib::arg("ansi_reset", spdlog::details::ansicolors::reset),
-                spdlog::fmt_lib::arg("eol", default_eol)));
+    REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("[{0}+++{1}] Test message 1{2}"
+                                                                 "[{0}+++{1}] Test message 2{2}",
+                                                                 spdlog::details::ansicolors::blue,
+                                                                 spdlog::details::ansicolors::reset,
+                                                                 default_eol));
 }
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]") {
