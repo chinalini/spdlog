@@ -102,4 +102,20 @@ void logger::err_handler_(const std::string &msg) {
 #endif
     }
 }
+
+void logger::push_attribute(const log_attributes::attr_map_t &attributes) {
+    this->attributes.attr_ctx(attributes.begin(), attributes.end());
+}
+void logger::push_attribute(const log_attributes::key_t &key, const log_attributes::value_t &value) {
+    attributes.put(key, value);
+}
+void logger::push_attribute(const log_attributes &attributes) {
+    const auto &map = attributes.get_map();
+    this->attributes.attr_ctx(map.begin(), map.end());
+}
+
+void logger::remove_attribute(const log_attributes::key_t &key) { attributes.remove(key); }
+
+void logger::clear_attribute() { attributes.clear(); }
+
 }  // namespace spdlog
